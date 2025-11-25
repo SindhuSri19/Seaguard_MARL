@@ -1,0 +1,6 @@
+Open Tomcat homepage in another tab
+        ├── Click on the "/webpath" option under the manager app
+               Note:
+1.	 It ask for user credentials for login ,provide the credentials of tomcat.
+2.	It provide the page with out project name which is highlighted.
+3.	After clicking on our project we can see output.
