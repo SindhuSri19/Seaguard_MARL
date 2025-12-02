@@ -4,3 +4,222 @@ Open Tomcat homepage in another tab
 1.	 It ask for user credentials for login ,provide the credentials of tomcat.
 2.	It provide the page with out project name which is highlighted.
 3.	After clicking on our project we can see output.
+
+
+
+1) Prepare Gmail (2-Step + App Password)
+
+Open https://myaccount.google.com
+ → Log in.
+
+Go to Security → 2-Step Verification → Turn ON.
+
+After enabling, go back to Security → find App passwords.
+
+Click App passwords → Select app: Other → name: Jenkins-Demo → Generate.
+
+Copy the 16-character App Password → save temporarily.
+
+Use this App Password in Jenkins, not your Gmail password.
+
+2) Install Email Extension Plugin in Jenkins
+
+Jenkins Dashboard → Manage Jenkins → Manage Plugins → Available.
+
+Search Email Extension Plugin or email-ext.
+
+Tick → Install without restart.
+
+Ensure default Mailer plugin exists (usually built-in).
+
+3) Add Gmail Credentials in Jenkins
+
+Jenkins Dashboard → Credentials → Global → Add Credentials.
+
+Set:
+
+Kind: Username with password
+
+Username: your Gmail address
+
+Password: the 16-char App Password
+
+ID: gmail-jenkins
+
+Description: Gmail App Password
+
+Click OK.
+
+4) Configure Jenkins Email (Both sections)
+A) Basic Email Notification
+
+Jenkins Dashboard → Manage Jenkins → Configure System.
+
+Find E-mail Notification.
+
+Fill:
+
+SMTP server: smtp.gmail.com
+
+Use SMTP Authentication: ✔️
+
+User Name: your Gmail
+
+Password: App Password
+
+Use SSL: ✔️
+
+SMTP port: 465
+
+Reply-To Address: your Gmail
+
+Click Test configuration → send test mail.
+
+Save.
+
+B) Extended E-mail Notification (Email-ext)
+
+In the same Configure System page, find Extended E-mail Notification.
+
+Fill:
+
+SMTP Server: smtp.gmail.com
+
+SMTP Port: 465
+
+Use SSL: ✔️
+
+Credentials: choose gmail-jenkins
+
+Default Content Type: text/html (optional)
+
+Save.
+
+5) Create a Job to Test Email
+
+Jenkins Dashboard → New Item → name: email-test-success → Freestyle → OK.
+
+Add Build Step:
+
+echo "Testing success email"
+exit 0
+
+
+Scroll to Post-build Actions → Add: Editable Email Notification.
+
+Fill:
+
+Project Recipient List: your email
+
+Default Subject:
+
+Jenkins Build: $PROJECT_NAME # $BUILD_NUMBER - $BUILD_STATUS
+
+
+Content: simple message or default.
+
+Add Trigger → Success.
+
+Save.
+
+6) Run the Job
+
+Click Build Now.
+
+Open build → Console Output.
+
+Look for:
+
+Sending email to: yourrecipient@gmail.com
+Email was sent successfully
+
+
+Check your inbox/spam for email.
+
+
+
+
+
+pipeline {
+    agent any
+
+    tools {
+        maven 'MAVEN_HOME'
+    }
+
+    stages {
+
+        stage('Checkout from GitHub') {
+            steps {
+                echo "Cloning repository..."
+                deleteDir()
+                git url: 'https://github.com/NaveenCK-10/selab-internal.git', branch: 'main'
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                echo "Cleaning project..."
+                bat "mvn clean"
+            }
+        }
+
+        stage('Compile & Install') {
+            steps {
+                echo "Compiling and installing..."
+                bat "mvn install"
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo "Running test cases..."
+                bat "mvn test"
+            }
+        }
+
+        stage('Package Application') {
+            steps {
+                echo "Packaging application..."
+                bat "mvn package"
+            }
+        }
+
+        stage('Final Output') {
+            steps {
+                echo "Build Pipeline Completed Successfully!"
+            }
+        }
+    }
+
+    post {
+        success {
+            emailext(
+                subject: "SUCCESS: Job ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """Hello,<br><br>
+                The Jenkins pipeline <b>${env.JOB_NAME}</b> completed successfully.<br>
+                Build Number: <b>${env.BUILD_NUMBER}</b><br><br>
+                Regards,<br>
+                Jenkins
+                """,
+                mimeType: "text/html",
+                to: "YOUR_EMAIL_HERE"
+            )
+        }
+
+        failure {
+            emailext(
+                subject: "FAILED: Job ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """Hello,<br><br>
+                The Jenkins pipeline <b>${env.JOB_NAME}</b> has FAILED.<br>
+                Build Number: <b>${env.BUILD_NUMBER}</b><br><br>
+                Please check the build logs.<br><br>
+                Regards,<br>
+                Jenkins
+                """,
+                mimeType: "text/html",
+                to: "YOUR_EMAIL_HERE"
+            )
+        }
+    }
+}
