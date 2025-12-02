@@ -287,3 +287,88 @@ git push -u origin main
 # 4. Click "Delete this repository"
 # 5. Type repo name to confirm
 # 6. Click "I understand the consequences, delete this repository"
+
+
+
+
+
+
+
+
+# 1. Pull MySQL image
+docker pull mysql:latest
+
+# 2. Run MySQL container
+docker run --name mysql-container \
+ -e MYSQL_ROOT_PASSWORD=MyPass123 \
+ -p 3306:3306 \
+ -d mysql:latest
+
+# 3. Check running containers
+docker ps
+
+# 4. Enter into MySQL shell inside container
+docker exec -it mysql-container mysql -u root -p
+# (Enter password: MyPass123)
+
+# 5. MySQL commands (run after entering MySQL shell)
+
+# Create database
+CREATE DATABASE school;
+
+# Select database
+USE school;
+
+# Create table
+CREATE TABLE students (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50),
+  age INT
+);
+
+# Insert records
+INSERT INTO students (name, age) VALUES ('John', 20), ('Maya', 22);
+
+# View table data
+SELECT * FROM students;
+
+# Exit MySQL
+exit;
+
+# 6. Stop container
+docker stop mysql-container
+
+# 7. Start container again
+docker start mysql-container
+
+
+
+###########################################################
+# OPTIONAL — CUSTOM MYSQL IMAGE WITH AUTO SQL INIT
+###########################################################
+
+# Create init.sql with default database and table
+# (paste into your system's init.sql file)
+# ---------------------------------------------------------
+# CREATE DATABASE company;
+# USE company;
+# CREATE TABLE employees (
+#  id INT AUTO_INCREMENT PRIMARY KEY,
+#  name VARCHAR(50),
+#  role VARCHAR(50)
+# );
+# INSERT INTO employees (name, role) VALUES ('Aditya', 'DevOps Engineer');
+# ---------------------------------------------------------
+
+# Create a Dockerfile
+# ---------------------------------------------------------
+# FROM mysql:latest
+# ENV MYSQL_ROOT_PASSWORD=MyPass123
+# COPY init.sql /docker-entrypoint-initdb.d/
+# ---------------------------------------------------------
+
+# Build your own image
+docker build -t my-mysql .
+
+# Run your custom image on port 3307
+docker run --name my-mysql-container -p 3307:3306 -d my-mysql
