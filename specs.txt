@@ -223,3 +223,67 @@ pipeline {
         }
     }
 }
+
+
+# -----------------------------
+# CREATE NEW SSH KEY FOR GITHUB
+# -----------------------------
+
+# 1. Generate SSH key
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# If ed25519 not supported:
+# ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+# 2. Start ssh-agent
+eval "$(ssh-agent -s)"
+
+# 3. Add private key to agent
+ssh-add ~/.ssh/id_ed25519
+
+# 4. Copy public key to clipboard (paste in GitHub → Settings → SSH keys)
+cat ~/.ssh/id_ed25519.pub
+
+# 5. Test GitHub SSH connection
+ssh -T git@github.com
+
+
+
+# ---------------------------------------
+# PUSH A LOCAL FOLDER/PROJECT TO GITHUB
+# ---------------------------------------
+
+# Go to your folder
+cd path/to/your/folder
+
+# Initialize Git
+git init
+
+# Add all files
+git add .
+
+# Commit
+git commit -m "Initial commit"
+
+# Add GitHub remote repository (use SSH URL)
+git remote add origin git@github.com:your-username/repo-name.git
+
+# Set branch name to main
+git branch -M main
+
+# Push to GitHub
+git push -u origin main
+
+
+
+# -----------------------------
+# DELETE A GITHUB REPOSITORY
+# -----------------------------
+# Steps (GitHub Website):
+
+# 1. Go to the repository on GitHub
+# 2. Click: Settings (top right)
+# 3. Scroll to bottom → Danger Zone
+# 4. Click "Delete this repository"
+# 5. Type repo name to confirm
+# 6. Click "I understand the consequences, delete this repository"
