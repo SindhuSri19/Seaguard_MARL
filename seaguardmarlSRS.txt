@@ -293,16 +293,22 @@ Modules -> Launch AWS academy lab -> I agree -> Start lab orange to green
 click in green AWS
 
 Click EC2 -> launch instance: 
--> Name = MyExampleServer , select ubuntu , default ubuntu server 24.04 , architecture 64bitx85 , instance type = t2.micro 
--> create new key pair , name = MyExampleKeyPair RSA .pem , click create key pair , download , create AWS folder on desktop and put .pem file in it
+-> Name = MyExampleServer , select ubuntu , default ubuntu server 24.04 , 
+architecture 64bitx85 , instance type = t2.micro 
+-> create new key pair , name = MyExampleKeyPair RSA .pem , click create key pair , 
+download , create AWS folder on desktop and put .pem file in it
 -> network settings - create security group - allow ssh, https, http
 storage 8gb
 click launch instance
 
-Instances tab -> green success message , MyExampleServer is running in instances , select it and click on connect , copy ssh .... command
-go to AWS folder, open cmd , paste ssh command , yes, sudo apt update , sudo apt-get install docker.io , sudo apt install git , sudo apt install nano
+Instances tab -> green success message , MyExampleServer is running in instances , 
+select it and click on connect , copy ssh .... command
+go to AWS folder, open cmd , paste ssh command , yes, sudo apt update ,
+sudo apt-get install docker.io , sudo apt install git , sudo apt install nano
 
-Create index.html in AWS folder , right click in aws folder ->open git bash here , git init , git add . , git commit -m "msg" , create new repo AWS, git branch -M main , git remote add origin gitlink , git push -u origin main , rephresh repo ,  copy https path , git clone copiedgiturl , ls , cd AWS , ls , nano Dockerfile 
+Create index.html in AWS folder , right click in aws folder ->open git bash here , git init , git add . ,
+git commit -m "msg" , create new repo AWS, git branch -M main , git remote add origin gitlink , 
+git push -u origin main , rephresh repo ,  copy https path , git clone copiedgiturl , ls , cd AWS , ls , nano Dockerfile 
 FROM nginx:alpine
 COPY . /usr/share/nginx/html/
 EXPOSE 80
@@ -311,7 +317,9 @@ ctrl o , ctrl x
 sudo docker build –t mywebapp , sudo docker run –d –p 80:80 mywebapp , click on instance id , click on link beside ipv4 address , add http:// or https
 optional : sudo docker ps , sudo docker stop <container-id>
 
-If your app is not running go to security  and Click on security groups, Click on edit inbound rules, Click on add rule give port as 9090 and 0.0.0.0/0 click on save, refresh
+If your app is not running go to security  and Click on security groups, Click on edit inbound rules, 
+Click on add rule give port as 9090 and 0.0.0.0/0 click on save, refresh
+
 
 
 
